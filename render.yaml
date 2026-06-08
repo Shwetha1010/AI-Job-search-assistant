@@ -1,0 +1,48 @@
+# render.yaml — Render deployment configuration
+# Two services: FastAPI backend + Streamlit frontend
+
+services:
+  # ── Service 1: FastAPI Backend ──────────────────────────────────────
+  - type: web
+    name: job-search-api
+    runtime: python
+    region: oregon           # closest free region
+    plan: starter            # 512MB RAM, no cold-start sleep ($7/mo) — needed for ML model
+    buildCommand: |
+      pip install --upgrade pip &&
+      pip install -r requirements.txt &&
+      python -m spacy download en_core_web_sm
+    startCommand: uvicorn api:app --host 0.0.0.0 --port $PORT
+    healthCheckPath: /docs
+    envVars:
+      - key: GROQ_API_KEY
+        sync: false          # set manually in Render dashboard
+      - key: SERP_API_KEY
+        sync: false          # set manually in Render dashboard
+      - key: PYTHONUNBUFFERED
+        value: "1"
+      - key: TRANSFORMERS_CACHE
+        value: /tmp/hf_cache
+      - key: HF_HOME
+        value: /tmp/hf_home
+
+  # ── Service 2: Streamlit Frontend ───────────────────────────────────
+  - type: web
+    name: job-search-app
+    runtime: python
+    region: oregon
+    plan: free               # Streamlit has no ML — 512MB RAM is fine
+    buildCommand: |
+      pip install --upgrade pip &&
+      pip install streamlit==1.56.0 requests==2.33.1 python-dotenv==1.2.2
+    startCommand: >
+      streamlit run app.py
+      --server.port $PORT
+      --server.address 0.0.0.0
+      --server.fileWatcherType none
+      --server.headless true
+    envVars:
+      - key: BACKEND_URL
+        sync: false          # set to your FastAPI service URL, e.g. https://job-search-api.onrender.com
+      - key: PYTHONUNBUFFERED
+        value: "1"

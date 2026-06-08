@@ -1,0 +1,53 @@
+# .gitignore — AI Job Search Assistant
+# Do NOT commit secrets, virtual env, or cached files
+
+# Environment secrets
+.env
+*.env
+
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+.Python
+*.pyc
+build/
+dist/
+*.egg-info/
+.eggs/
+
+# Virtual environment
+.venv/
+venv/
+env/
+ENV/
+
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Streamlit
+.streamlit/secrets.toml
+
+# HuggingFace / Torch cache (large, regenerated at runtime)
+.cache/
+/tmp/hf_cache/
+/tmp/hf_home/
+
+# Saved jobs data (ephemeral on Render — reset on redeploy)
+# Uncomment next line if you want to gitignore saved jobs
+# saved_jobs.json
+
+# Logs
+*.log
+
+# Jupyter
+.ipynb_checkpoints/
