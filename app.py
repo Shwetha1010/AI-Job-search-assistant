@@ -356,8 +356,8 @@ elif page == "📄 Resume Analyzer":
                         json={"text": parsed["text"], "skills": parsed["skills"], "role": job_role}
                     )
                     analysis = res2.json()
-                except Exception:
-                    st.error("❌ Backend error. Make sure FastAPI is running.")
+                except Exception as e:
+                    st.error(f"❌ Backend error: {e}\n\nBackend URL being used: {BASE_URL}")
                     st.stop()
 
             st.success("✅ Analysis Complete!")
