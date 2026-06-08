@@ -22,35 +22,12 @@ Upload your resume once. The system does the rest — analyzing your skills, fin
 
 | Module | What It Does |
 |--------|-------------|
-| 📄 **Resume Analyzer** | Parses your PDF, extracts skills with NLP, and generates a detailed AI analysis — strengths, gaps, and actionable suggestions |
-| 🔍 **Job Matcher** | Scrapes live jobs from LinkedIn, Indeed, Naukri & Google Jobs, then ranks them using a hybrid semantic + keyword scoring model |
-| 🎤 **Interview Coach** | Generates personalized interview questions (HR / Technical, Easy / Hard) based on your resume and target role, then evaluates your answers |
-| 💾 **Saved Jobs** | Bookmark interesting roles and revisit them anytime |
+| **Resume Analyzer** | Parses your PDF, extracts skills with NLP, and generates a detailed AI analysis — strengths, gaps, and actionable suggestions |
+| **Job Matcher** | Scrapes live jobs from LinkedIn, Indeed, Naukri & Google Jobs, then ranks them using a hybrid semantic + keyword scoring model |
+| **Interview Coach** | Generates personalized interview questions (HR / Technical, Easy / Hard) based on your resume and target role, then evaluates your answers |
+| **Saved Jobs** | Bookmark interesting roles and revisit them anytime |
 
----
 
-## Architecture
-
-```
-┌────────────────────────────────────────────────────────────┐
-│                    HuggingFace Spaces                       │
-│                                                            │
-│  ┌─────────────────────┐       ┌──────────────────────┐   │
-│  │  Streamlit Frontend  │──────▶│   FastAPI Backend     │   │
-│  │  (job-search-app)    │       │   (job-search-api)    │   │
-│  └─────────────────────┘       │                      │   │
-│                                │  • SentenceTransform  │   │
-│                                │  • spaCy NLP          │   │
-│                                │  • FAISS vector search│   │
-│                                │  • BeautifulSoup      │   │
-│                                └──────────┬───────────┘   │
-└───────────────────────────────────────────┼────────────────┘
-                                            │
-                          ┌─────────────────┼──────────────┐
-                          │                 │              │
-                      Groq API          SerpAPI      LinkedIn /
-                   (LLaMA 3.1)       (Google Jobs)  Indeed / Naukri
-```
 
 ---
 
