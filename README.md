@@ -2,10 +2,11 @@
 
 <div align="center">
 
-![Python](https://img.shields.io/badge/Python-3.10+-blue?style=for-the-badge&logo=python)
-![FastAPI](https://img.shields.io/badge/FastAPI-0.135-green?style=for-the-badge&logo=fastapi)
-![Streamlit](https://img.shields.io/badge/Streamlit-1.56-red?style=for-the-badge&logo=streamlit)
+![Python](https://img.shields.io/badge/Python-3.11+-blue?style=for-the-badge&logo=python)
+![FastAPI](https://img.shields.io/badge/FastAPI-Backend-green?style=for-the-badge&logo=fastapi)
+![Streamlit](https://img.shields.io/badge/Streamlit-Frontend-red?style=for-the-badge&logo=streamlit)
 ![Groq](https://img.shields.io/badge/Groq-LLaMA_3.1-orange?style=for-the-badge)
+![HuggingFace](https://img.shields.io/badge/HuggingFace-Spaces-yellow?style=for-the-badge)
 
 **An intelligent career platform that analyzes your resume, finds relevant jobs, and prepares you for interviews — all powered by AI.**
 
@@ -40,23 +41,27 @@
 **Frontend**
 - [Streamlit](https://streamlit.io/) — Interactive web UI
 
+**Deployment**
+- [HuggingFace Spaces](https://huggingface.co/spaces) — Free cloud hosting (16GB RAM)
+
 ---
 
 ## 📁 Project Structure
 
 ```
 JOB_SEARCH_ASSISTANT/
-├── api.py                  # FastAPI backend — all endpoints
-├── app.py                  # Streamlit frontend — UI
-├── requirements.txt        # Python dependencies
-├── render.yaml             # Render deployment config
-├── saved_jobs.json         # Local saved jobs storage
+├── api.py                    # FastAPI backend — all endpoints
+├── app.py                    # Streamlit frontend — UI
+├── Dockerfile                # Backend HuggingFace Space config
+├── requirements.txt          # Frontend dependencies (lightweight)
+├── requirements-backend.txt  # Backend dependencies (ML/heavy)
+├── saved_jobs.json           # Local saved jobs storage
 └── utils/
-    ├── resume_parser.py    # PDF text + skill extraction
-    ├── resume_analyzer.py  # AI resume analysis (Groq)
-    ├── job_search_agent.py # Job scraping + ranking logic
-    ├── interview_agent.py  # Question generation + evaluation
-    └── saved_jobs.py       # Save/retrieve jobs
+    ├── resume_parser.py      # PDF text + skill extraction
+    ├── resume_analyzer.py    # AI resume analysis (Groq)
+    ├── job_search_agent.py   # Job scraping + ranking logic
+    ├── interview_agent.py    # Question generation + evaluation
+    └── saved_jobs.py         # Save/retrieve jobs
 ```
 
 ---
@@ -74,14 +79,12 @@ JOB_SEARCH_ASSISTANT/
 | `POST` | `/generate-questions` | Generate interview questions |
 | `POST` | `/evaluate` | Evaluate interview answers |
 
-Interactive API docs: `http://localhost:8000/docs`
-
 ---
 
 ## 🚀 Run Locally
 
 ### Prerequisites
-- Python 3.10+
+- Python 3.11+
 - Groq API key → [console.groq.com](https://console.groq.com)
 - SerpAPI key (optional) → [serpapi.com](https://serpapi.com)
 
@@ -94,11 +97,10 @@ cd ai-job-search-assistant
 
 # 2. Create virtual environment
 python3 -m venv .venv
-source .venv/bin/activate        # macOS/Linux
-# .venv\Scripts\activate         # Windows
+source .venv/bin/activate
 
 # 3. Install dependencies
-pip install -r requirements.txt
+pip install -r requirements-backend.txt
 python -m spacy download en_core_web_sm
 
 # 4. Create .env file
@@ -116,38 +118,33 @@ Open **http://localhost:8501** in your browser.
 
 ---
 
-## 🌐 Deployment (Render)
+## 🌐 Deployment (HuggingFace Spaces — Free)
 
 ### Architecture
-- **FastAPI backend** → Render Web Service (Starter plan)
-- **Streamlit frontend** → Render Web Service (Free plan)
+```
+[Browser] → Streamlit Space (Free) → FastAPI Space (Docker, Free, 16GB RAM)
+                                              ↓
+                                    Groq API + SerpAPI
+```
 
-### Environment Variables
+### Two Spaces Setup
+| Space | SDK | What it runs |
+|-------|-----|-------------|
+| `job-search-api` | Docker | FastAPI backend + all ML models |
+| `job-search-app` | Streamlit | Frontend UI only |
 
-**Backend service:**
+### Environment Variables (Secrets)
+
+**Backend Space (`job-search-api`):**
 ```
 GROQ_API_KEY=your_groq_key
 SERP_API_KEY=your_serp_key
-PYTHONUNBUFFERED=1
-TRANSFORMERS_CACHE=/tmp/hf_cache
-HF_HOME=/tmp/hf_home
 ```
 
-**Frontend service:**
+**Frontend Space (`job-search-app`):**
 ```
-BACKEND_URL=https://your-backend-name.onrender.com
-PYTHONUNBUFFERED=1
+BACKEND_URL=https://YOUR_USERNAME-job-search-api.hf.space
 ```
-
-See the full deployment guide in `deployment_guide.md`.
-
----
-
-## 📸 Screenshots
-
-> Resume Analyzer · Job Search · Interview Prep
-
-*(Add screenshots here after deployment)*
 
 ---
 
@@ -164,9 +161,9 @@ See the full deployment guide in `deployment_guide.md`.
 
 ## ⚠️ Known Limitations
 
-- **Saved jobs** are stored in a local JSON file. On Render free tier, they reset on redeploy. For persistent storage, a database integration is recommended.
-- **Web scraping** results depend on site availability. Some job sources may return fewer results depending on rate limits.
+- **Saved jobs** are stored in a local JSON file. They reset on redeploy. For persistent storage, a database integration is recommended.
 - **SerpAPI** free tier allows 100 Google Jobs searches per month.
+- **HuggingFace Spaces** free CPU spaces may sleep after inactivity. First request after sleep takes ~30 seconds.
 
 ---
 
@@ -177,5 +174,5 @@ MIT License — feel free to use, modify, and distribute.
 ---
 
 <div align="center">
-Built with ❤️ using FastAPI · Streamlit · Groq · SentenceTransformers
+Built with ❤️ using FastAPI · Streamlit · Groq · SentenceTransformers · HuggingFace Spaces
 </div>
