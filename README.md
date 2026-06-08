@@ -1,178 +1,146 @@
-# 🤖 AI Job Search Assistant
-
 <div align="center">
 
-![Python](https://img.shields.io/badge/Python-3.11+-blue?style=for-the-badge&logo=python)
-![FastAPI](https://img.shields.io/badge/FastAPI-Backend-green?style=for-the-badge&logo=fastapi)
-![Streamlit](https://img.shields.io/badge/Streamlit-Frontend-red?style=for-the-badge&logo=streamlit)
-![Groq](https://img.shields.io/badge/Groq-LLaMA_3.1-orange?style=for-the-badge)
-![HuggingFace](https://img.shields.io/badge/HuggingFace-Spaces-yellow?style=for-the-badge)
+# 🤖 AI Job Search Assistant
 
-**An intelligent career platform that analyzes your resume, finds relevant jobs, and prepares you for interviews — all powered by AI.**
+### An end-to-end intelligent career platform powered by LLMs, semantic search, and real-time job scraping
+
+[![Live Demo](https://img.shields.io/badge/🚀_Live_Demo-HuggingFace_Spaces-FFD21E?style=for-the-badge)](https://huggingface.co/spaces/sheethus/job-search-app)
+[![FastAPI](https://img.shields.io/badge/FastAPI-Backend-009688?style=for-the-badge&logo=fastapi)](https://fastapi.tiangolo.com)
+[![Streamlit](https://img.shields.io/badge/Streamlit-Frontend-FF4B4B?style=for-the-badge&logo=streamlit)](https://streamlit.io)
+[![Groq](https://img.shields.io/badge/Groq-LLaMA_3.1-F54E00?style=for-the-badge)](https://groq.com)
+[![HuggingFace](https://img.shields.io/badge/HuggingFace-Spaces-FFD21E?style=for-the-badge&logo=huggingface)](https://huggingface.co)
+
+**[▶ Try the live app →](https://huggingface.co/spaces/sheethus/job-search-app)**
 
 </div>
 
 ---
 
-## ✨ Features
+## What It Does
 
-| Feature | Description |
-|---------|-------------|
-| 📄 **Resume Analyzer** | Upload your PDF resume and get a detailed AI analysis — strengths, weaknesses, skill gaps, and suggestions |
-| 🔍 **Resume-Based Job Search** | Finds and ranks jobs based on your actual resume skills with a smart match score |
-| 🔎 **Custom Job Search** | Search by role, location, job type, and date with filters |
-| 🎤 **AI Interview Prep** | Generates personalized interview questions (HR/Technical, Easy/Medium/Hard) and evaluates your answers |
-| 💾 **Saved Jobs** | Save and revisit job listings you're interested in |
+Upload your resume once. The system does the rest — analyzing your skills, finding matched jobs from across the web, and preparing you for interviews using AI.
+
+| Module | What It Does |
+|--------|-------------|
+| 📄 **Resume Analyzer** | Parses your PDF, extracts skills with NLP, and generates a detailed AI analysis — strengths, gaps, and actionable suggestions |
+| 🔍 **Job Matcher** | Scrapes live jobs from LinkedIn, Indeed, Naukri & Google Jobs, then ranks them using a hybrid semantic + keyword scoring model |
+| 🎤 **Interview Coach** | Generates personalized interview questions (HR / Technical, Easy / Hard) based on your resume and target role, then evaluates your answers |
+| 💾 **Saved Jobs** | Bookmark interesting roles and revisit them anytime |
 
 ---
 
-## 🛠️ Tech Stack
+## Architecture
+
+```
+┌────────────────────────────────────────────────────────────┐
+│                    HuggingFace Spaces                       │
+│                                                            │
+│  ┌─────────────────────┐       ┌──────────────────────┐   │
+│  │  Streamlit Frontend  │──────▶│   FastAPI Backend     │   │
+│  │  (job-search-app)    │       │   (job-search-api)    │   │
+│  └─────────────────────┘       │                      │   │
+│                                │  • SentenceTransform  │   │
+│                                │  • spaCy NLP          │   │
+│                                │  • FAISS vector search│   │
+│                                │  • BeautifulSoup      │   │
+│                                └──────────┬───────────┘   │
+└───────────────────────────────────────────┼────────────────┘
+                                            │
+                          ┌─────────────────┼──────────────┐
+                          │                 │              │
+                      Groq API          SerpAPI      LinkedIn /
+                   (LLaMA 3.1)       (Google Jobs)  Indeed / Naukri
+```
+
+---
+
+## Tech Stack
+
+**AI / ML**
+- [Groq](https://groq.com) — Ultra-fast LLM inference with LLaMA 3.1 8B (resume analysis, interview Q&A)
+- [Sentence Transformers](https://www.sbert.net) — `all-MiniLM-L6-v2` for semantic job-resume similarity
+- [FAISS](https://github.com/facebookresearch/faiss) — Vector similarity search for skill matching
+- [spaCy](https://spacy.io) — NLP pipeline for skill entity extraction
+- Hybrid scoring: **70% keyword overlap + 30% semantic cosine similarity**
 
 **Backend**
-- [FastAPI](https://fastapi.tiangolo.com/) — REST API
-- [Groq](https://groq.com/) — LLM inference (LLaMA 3.1 8B)
-- [Sentence Transformers](https://www.sbert.net/) — Semantic similarity & job ranking
-- [spaCy](https://spacy.io/) — NLP / skill extraction
-- [FAISS](https://github.com/facebookresearch/faiss) — Vector search
-- [BeautifulSoup](https://www.crummy.com/software/BeautifulSoup/) — Job scraping
-- [SerpAPI](https://serpapi.com/) — Google Jobs integration
-- [PyMuPDF](https://pymupdf.readthedocs.io/) — PDF parsing
+- [FastAPI](https://fastapi.tiangolo.com) — REST API with async support
+- [PyMuPDF](https://pymupdf.readthedocs.io) — PDF parsing
+- [BeautifulSoup](https://www.crummy.com/software/BeautifulSoup) + [SerpAPI](https://serpapi.com) — Multi-source job scraping
 
-**Frontend**
-- [Streamlit](https://streamlit.io/) — Interactive web UI
-
-**Deployment**
+**Frontend & Deployment**
+- [Streamlit](https://streamlit.io) — Interactive UI
+- [Docker](https://docker.com) — Containerised backend
 - [HuggingFace Spaces](https://huggingface.co/spaces) — Free cloud hosting (16GB RAM)
 
 ---
 
-## 📁 Project Structure
-
-```
-JOB_SEARCH_ASSISTANT/
-├── api.py                    # FastAPI backend — all endpoints
-├── app.py                    # Streamlit frontend — UI
-├── Dockerfile                # Backend HuggingFace Space config
-├── requirements.txt          # Frontend dependencies (lightweight)
-├── requirements-backend.txt  # Backend dependencies (ML/heavy)
-├── saved_jobs.json           # Local saved jobs storage
-└── utils/
-    ├── resume_parser.py      # PDF text + skill extraction
-    ├── resume_analyzer.py    # AI resume analysis (Groq)
-    ├── job_search_agent.py   # Job scraping + ranking logic
-    ├── interview_agent.py    # Question generation + evaluation
-    └── saved_jobs.py         # Save/retrieve jobs
-```
-
----
-
-## ⚙️ API Endpoints
-
-| Method | Endpoint | Description |
-|--------|----------|-------------|
-| `POST` | `/parse-resume` | Upload PDF → extract text + skills |
-| `POST` | `/analyze-resume` | AI analysis of resume for a target role |
-| `GET`  | `/jobs` | Custom job search with filters |
-| `POST` | `/top-jobs` | Resume-based ranked job search |
-| `POST` | `/save-job` | Save a job listing |
-| `GET`  | `/saved-jobs` | Get all saved jobs |
-| `POST` | `/generate-questions` | Generate interview questions |
-| `POST` | `/evaluate` | Evaluate interview answers |
-
----
-
-## 🚀 Run Locally
-
-### Prerequisites
-- Python 3.11+
-- Groq API key → [console.groq.com](https://console.groq.com)
-- SerpAPI key (optional) → [serpapi.com](https://serpapi.com)
-
-### Setup
+## Run Locally
 
 ```bash
-# 1. Clone the repository
-git clone https://github.com/YOUR_USERNAME/ai-job-search-assistant.git
-cd ai-job-search-assistant
+# Clone
+git clone https://github.com/Shwetha1010/AI-Job-search-assistant.git
+cd AI-Job-search-assistant
 
-# 2. Create virtual environment
-python3 -m venv .venv
-source .venv/bin/activate
-
-# 3. Install dependencies
+# Setup
+python3 -m venv .venv && source .venv/bin/activate
 pip install -r requirements-backend.txt
 python -m spacy download en_core_web_sm
 
-# 4. Create .env file
-echo "GROQ_API_KEY=your_groq_key_here" > .env
-echo "SERP_API_KEY=your_serp_key_here" >> .env
+# Add API keys
+echo "GROQ_API_KEY=your_key" > .env
+echo "SERP_API_KEY=your_key" >> .env
 
-# 5. Start backend (Terminal 1)
-uvicorn api:app --reload --port 8000
+# Start backend (Terminal 1)
+uvicorn api:app --port 8000
 
-# 6. Start frontend (Terminal 2)
-streamlit run app.py --server.fileWatcherType none
+# Start frontend (Terminal 2)
+streamlit run app.py
 ```
 
-Open **http://localhost:8501** in your browser.
+Open `http://localhost:8501`
 
 ---
 
-## 🌐 Deployment (HuggingFace Spaces — Free)
+## API Endpoints
 
-### Architecture
-```
-[Browser] → Streamlit Space (Free) → FastAPI Space (Docker, Free, 16GB RAM)
-                                              ↓
-                                    Groq API + SerpAPI
-```
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| `POST` | `/parse-resume` | Extract text and skills from PDF |
+| `POST` | `/analyze-resume` | LLM-powered resume analysis |
+| `POST` | `/top-jobs` | Semantically ranked job search |
+| `GET`  | `/jobs` | Custom job search with filters |
+| `POST` | `/generate-questions` | Personalized interview questions |
+| `POST` | `/evaluate` | LLM evaluation of interview answers |
+| `POST` | `/save-job` | Save a job listing |
+| `GET`  | `/saved-jobs` | Retrieve saved jobs |
 
-### Two Spaces Setup
-| Space | SDK | What it runs |
-|-------|-----|-------------|
-| `job-search-api` | Docker | FastAPI backend + all ML models |
-| `job-search-app` | Streamlit | Frontend UI only |
-
-### Environment Variables (Secrets)
-
-**Backend Space (`job-search-api`):**
-```
-GROQ_API_KEY=your_groq_key
-SERP_API_KEY=your_serp_key
-```
-
-**Frontend Space (`job-search-app`):**
-```
-BACKEND_URL=https://YOUR_USERNAME-job-search-api.hf.space
-```
+Interactive docs: `https://sheethus-job-search-api.hf.space/docs`
 
 ---
 
-## 🔑 API Keys
+## Project Structure
 
-| Service | Free Tier | Get Key |
-|---------|-----------|---------|
-| Groq (LLM) | Very generous free limits | [console.groq.com](https://console.groq.com) |
-| SerpAPI (Google Jobs) | 100 searches/month | [serpapi.com](https://serpapi.com) |
-
-> **Note:** The app works without a SerpAPI key — LinkedIn, Indeed, Naukri, Remotive, and Google scraping still work as fallback sources.
-
----
-
-## ⚠️ Known Limitations
-
-- **Saved jobs** are stored in a local JSON file. They reset on redeploy. For persistent storage, a database integration is recommended.
-- **SerpAPI** free tier allows 100 Google Jobs searches per month.
-- **HuggingFace Spaces** free CPU spaces may sleep after inactivity. First request after sleep takes ~30 seconds.
-
----
-
-## 📄 License
-
-MIT License — feel free to use, modify, and distribute.
+```
+├── api.py                    # FastAPI — all endpoints
+├── app.py                    # Streamlit — UI
+├── Dockerfile                # Backend container config
+├── requirements.txt          # Frontend dependencies
+├── requirements-backend.txt  # Backend + ML dependencies
+└── utils/
+    ├── resume_parser.py      # PDF parsing + NLP skill extraction
+    ├── resume_analyzer.py    # Groq LLM analysis prompt
+    ├── job_search_agent.py   # Scraping + hybrid ranking logic
+    ├── interview_agent.py    # Question generation + evaluation
+    └── saved_jobs.py         # Job persistence
+```
 
 ---
 
 <div align="center">
-Built with ❤️ using FastAPI · Streamlit · Groq · SentenceTransformers · HuggingFace Spaces
+
+Built with Python · FastAPI · Streamlit · Groq · HuggingFace
+
+**[▶ Try it live](https://huggingface.co/spaces/sheethus/job-search-app)**
+
 </div>
