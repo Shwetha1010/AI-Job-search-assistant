@@ -6,8 +6,8 @@ services:
   - type: web
     name: job-search-api
     runtime: python
-    region: oregon           # closest free region
-    plan: starter            # 512MB RAM, no cold-start sleep ($7/mo) — needed for ML model
+    region: oregon
+    plan: starter
     buildCommand: |
       pip install --upgrade pip &&
       pip install -r requirements.txt &&
@@ -16,9 +16,9 @@ services:
     healthCheckPath: /docs
     envVars:
       - key: GROQ_API_KEY
-        sync: false          # set manually in Render dashboard
+        sync: false
       - key: SERP_API_KEY
-        sync: false          # set manually in Render dashboard
+        sync: false
       - key: PYTHONUNBUFFERED
         value: "1"
       - key: TRANSFORMERS_CACHE
@@ -31,10 +31,10 @@ services:
     name: job-search-app
     runtime: python
     region: oregon
-    plan: free               # Streamlit has no ML — 512MB RAM is fine
+    plan: free
     buildCommand: |
       pip install --upgrade pip &&
-      pip install streamlit==1.56.0 requests==2.33.1 python-dotenv==1.2.2
+      pip install streamlit>=1.35.0 requests>=2.31.0 python-dotenv>=1.0.0
     startCommand: >
       streamlit run app.py
       --server.port $PORT
@@ -43,6 +43,6 @@ services:
       --server.headless true
     envVars:
       - key: BACKEND_URL
-        sync: false          # set to your FastAPI service URL, e.g. https://job-search-api.onrender.com
+        sync: false
       - key: PYTHONUNBUFFERED
         value: "1"
